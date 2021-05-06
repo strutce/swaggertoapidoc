@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="application/msword; charset=utf-8"/>
+    <title>doc</title>
+    <style type="text/css">
+        .bg {
+            font-size: 14.5px;
+            font-weight: bold;
+            color: #000;
+            background-color: #559e68;
+        }
+
+        table {
+            border-width: 1px;
+            border-style: solid;
+            border-color: black;
+            table-layout: fixed;
+        }
+
+        tr {
+            height: 32px;
+            font-size: 12px;
+        }
+
+        td {
+            padding-left: 10px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: black;
+            height: 32px;
+            overflow: hidden;
+            word-break: break-all;
+            word-wrap: break-word;
+            font-size: 14.5px;
+        }
+
+        .bg td {
+            font-size: 14.5px;
+        }
+
+        tr td {
+            font-size: 14.5px;
+        }
+
+        .specialHeight {
+            height: 40px;
+        }
+
+        .first_title {
+            height: 60px;
+            line-height: 60px;
+            margin: 0;
+            font-weight: bold;
+            font-size: 21px;
+        }
+
+        .second_title {
+            height: 40px;
+            line-height: 40px;
+            margin: 0;
+            font-size: 18.5px;
+        }
+
+        .doc_title {
+            font-size: 42.5px;
+            text-align: center;
+        }
+
+        .download_btn {
+            float: right;
+        }
+
+        body {
+            font-family: 思源黑体 Normal;
+        }
+    </style>
+</head>
+
+<body>
+<div style="width:80%; margin: 0 auto">
+    <div>
+        <p class="doc_title" th:text="${info.title +'（'+ info.version +'）'}"></p>
+        <a class="download_btn"  th:href="${'/download?url='+ url}">下载文档</a>
+        <br>
+    </div>
+    <div th:each="controllerMap:${controllerMap}" style="margin-bottom:20px;">
+        <!--这个是类的说明-->
+        <h4 class="first_title" th:text="${controllerMap.key}"></h4>
+        <div th:each="table,tableStat:${controllerMap.value}">
+
+            <!--这个是每个请求的说明，方便生成文档后进行整理-->
+            <h5 class="second_title" th:text="${tableStat.count} + '）' + ${table.tag}"></h5>
+
+            <table border="1" cellspacing="0" cellpadding="0" width="100%">
+                <tr class="bg">
+                    <td colspan="4" th:text="${table.tag}"></td>
+                </tr>
+                <tr>
+                    <td width="30%">接口描述</td>
+                    <td colspan="3" th:text="${table.description}"></td>
+                </tr>
+                <tr>
+                    <td>URL</td>
+                    <td colspan="3" th:text="${table.url}"></td>
+                </tr>
+                <tr>
+                    <td>请求方式</td>
+                    <td colspan="3" th:text="${table.requestType}"></td>
+                </tr>
+                <tr>
+                    <td>请求类型</td>
+                    <td colspan="3" th:text="${table.requestForm}"></td>
+                </tr>
+                <tr>
+                    <td>返回类型</td>
+                    <td colspan="3" th:text="${table.responseForm}"></td>
+                </tr>
+                <tr class="bg">
+                    <td colspan="4" >请求头</td>
+                </tr>
+                <tr>
+                    <td>参数名</td>
+                    <td width="15%">数据类型</td>
+                    <td width="15%">是否必填</td>
+                    <td width="29%">说明</td>
+                </tr>
+
+                <th:block th:each="request, c:${table.headerList}">
+                    <tr>
+                        <td align="left" th:text="${c.count} + '.' + ${request.name}"></td>
+                        <td th:text="${request.type}"></td>
+                        <td >
+                            <DIV th:if="${request.require}" th:text="Y"></DIV>
+                            <DIV th:if="${!request.require}" th:text="N"></DIV>
+                        </td>
+                        <td th:text="${request.remark}"></td>
+                    </tr>
+                    <th:block th:if="${request.propertiesVo}">
+                        <tbody th:include="this::request(${request.propertiesVo.propertiesVOList},${c.count} + '.', 1)"/>
+                    </th:block>
+
+
+                </th:block>
+
+                <tr class="bg">
+                    <td colspan="4" >请求参数</td>
+                </tr>
+
+                <tr>
+                    <td>参数名</td>
+                    <td width="15%">数据类型</td>
+                    <td width="15%">是否必填</td>
+                    <td width="29%">说明</td>
+                </tr>
+
+                <th:block th:each="request, c:${table.requestList}">
+                    <tr>
+                        <td align="left" th:text="${c.count} + '.' + ${request.name}"></td>
+                        <td th:text="${request.type}"></td>
+                        <td >
+                            <DIV th:if="${request.require}" th:text="Y"></DIV>
+                            <DIV th:if="${!request.require}" th:text="N"></DIV>
+                        </td>
+                        <td th:text="${request.remark}"></td>
+                    </tr>
+                    <th:block th:if="${request.propertiesVo}">
+                        <tbody th:include="this::request(${request.propertiesVo.propertiesVOList},${c.count} + '.', 1)"/>
+                    </th:block>
+
+
+                </th:block>
+
+                <tr class="bg">
+                    <td colspan="4" >响应参数</td>
+                </tr>
+                <tr>
+                    <td>属性</td>
+                    <td colspan="1">类型</td>
+                    <td colspan="2">说明</td>
+                </tr>
+                <tr>
+                    <td>code</td>
+                    <td colspan="1">integer</td>
+                    <td colspan="2">说明</td>
+                </tr>
+                <tr>
+                    <td>success</td>
+                    <td colspan="1">boolean</td>
+                    <td colspan="2">说明</td>
+                </tr>
+                <tr>
+                    <td>message</td>
+                    <td colspan="1">String</td>
+                    <td colspan="2">说明</td>
+                </tr>
+                <tr>
+                    <td>info</td>
+                    <td colspan="1">Object</td>
+                    <td colspan="2">说明</td>
+                </tr>
+                <tr class="bg">
+                    <td colspan="4" >info对象</td>
+                </tr>
+                <tr >
+                    <td>属性</td>
+                    <td colspan="1">类型</td>
+                    <td colspan="2">说明</td>
+                </tr>
+
+                <!--               对返回参数 递归生成行-->
+                <div th:if="(${table.propertiesVo!=null})">
+                    <tbody th:include="this::response(${table.propertiesVo.propertiesVOList},'', 1)"/>
+                </div>
+
+
+
+            </table>
+        </div>
+    </div>
+</div>
+
+<th:block th:fragment="request(propertiesVOList,count, lv)">
+    <th:block th:each="p,c : ${propertiesVOList}">
+        <tr>
+            <td align="left" th:text="${count} + '' + ${c.count} + '.' + ${p.name}"
+                th:style="|padding-left:${10*lv}px|"></td>
+            <td th:text="${p.type}"></td>
+            <td></td>
+            <td th:if="${p.require}" th:text="Y"></td>
+            <td th:if="${!p.require}" th:text="N"></td>
+            <td th:text="${p.description}"></td>
+        </tr>
+        <th:block th:unless="${#lists.isEmpty(p.propertiesVOList)}"
+                  th:include="this::request(${p.propertiesVOList},${count} + '' + ${c.count} + '.',${lv+1})"/>
+    </th:block>
+</th:block>
+
+<th:block th:fragment="response(propertiesVOList,count, lv)">
+    <th:block th:each="p,c : ${propertiesVOList}">
+        <tr>
+            <td align="left" th:text="${count} + '' + ${c.count} + '.' + ${p.name}"
+                th:style="|padding-left:${10*lv}px|"></td>
+            <td colspan="1" th:text="${p.type}"></td>
+            <td colspan="2" th:text="${p.description}"></td>
+        </tr>
+        <th:block th:unless="${#lists.isEmpty(p.propertiesVOList)}"
+                  th:include="this::response(${p.propertiesVOList},${count} + '' + ${c.count} + '.',${lv+1})"/>
+    </th:block>
+</th:block>
+</body>
+</html>

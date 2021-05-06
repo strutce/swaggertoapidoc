@@ -1,0 +1,13 @@
+server:
+  port: 8079
+spring:
+  application:
+    name: swaggertoiapidoc
+  thymeleaf:
+    enabled: true
+    prefix: classpath:/templates/
+    suffix: .html
+    servlet:
+      content-type: text/html
+    encoding: UTF-8
+    mode: THML5
