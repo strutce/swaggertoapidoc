@@ -12,6 +12,7 @@ public class SwaggertoapidocApplication {
         SpringApplication.run(SwaggertoapidocApplication.class, args);
     }
 
+
     @Bean
     public RestTemplate restTemplate(){
         return new RestTemplate();
