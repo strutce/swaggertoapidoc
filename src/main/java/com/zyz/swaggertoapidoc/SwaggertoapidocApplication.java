@@ -13,8 +13,12 @@ public class SwaggertoapidocApplication {
     }
 
 
+
+
+
     @Bean
     public RestTemplate restTemplate(){
+        System.out.println("111");
         return new RestTemplate();
     }
 }
